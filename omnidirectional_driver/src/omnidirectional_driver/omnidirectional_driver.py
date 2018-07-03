@@ -32,7 +32,7 @@ class omni():
         ack_code = self.port.read().decode('utf-8')
 
         # write vel commands
-        self.port.write("0.1 0.1 0.1 0.1\n".encode('utf-8'))
+        self.port.write(str(str(x) + " " + str(y) + " " + str(omega) +"\n").encode('utf-8'))
         ack_code = self.port.readline().decode('utf-8')
 
     def close_connection(self):
