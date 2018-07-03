@@ -1,0 +1,20 @@
+<package>
+  <name>omnidirectional_robot</name>
+  <version>0.1.0</version>
+  <description>
+    Metapackage for drivers for the ArcosLab omnidirectional robot.
+  </description>
+  <author>Stuart Leal</author>
+  <maintainer email="stuart.leal@ucr.ac.cr">Stuart Leal</maintainer>
+  <license>BSD</license>
+  <url>https://github.com/slealq/omnidirectional_robot</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>omnidirectional_driver</run_depend>
+  <run_depend>omnidirectional_node</run_depend>
+
+  <export>
+   <metapackage/>
+  </export>
+</package>
