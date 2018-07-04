@@ -32,17 +32,25 @@ class OmnidirectionalNode:
         # subscribe to cmd vel topic
         rospy.Subscriber("cmd_vel", Twist, self.cmd_vel_cb)
 
+        # set vels list to 0
+        self.cmd_vel = [0,0,0]
+
     def spin(self):
         """ Spin function to call """
 
+        # first time stamp
         then = rospy.Time.now()
 
-        r = rospy.Rate(5)
+        # init the odom message
+        odom = Odometry(header=rospy.Header(frame_id="odom"), child_frame_id='base_link')
 
-        self.robot.requestScan()
+        # set rate to mantain for scans
+        r = rospy.Rate(5)
 
         while not rospy.is_shutdown():
             # get motor encoder values
 
             # send updated movement codes
-            self.robot.set_motors(self.cmd_vel[0], )
+            self.robot.set_motors(self.cmd_vel[0], self.cmd_vel[1], self.cmd_vel[2])
+
+            #
