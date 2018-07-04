@@ -1,0 +1,19 @@
+<package>
+  <name>omnidirectional_driver</name>
+  <version>0.2.0</version>
+  <description>
+    This are the drivers for stm32-roboclaw project, for omnidirectional robot.
+  </description>
+  <author>Stuart Leal</author>
+  <maintainer email="stuart.leal@ucr.ac.cr">Stuart Leal</maintainer>
+  <license>GNU</license>
+  <url>https://github.com/slealq/omnidirectional_robot</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>python-serial</run_depend>
+
+  <export>
+    <rosdoc config="rosdoc.yaml" />
+  </export>
+</package>
