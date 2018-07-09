@@ -54,6 +54,37 @@ class omni():
 
         return values
 
+    def read_global_vel(self):
+        """Read global vel of the robot,
+        this should return vel x, vel y, vel theta """
+
+        # flush clean the port
+        self.port.flush()
+
+        # write v code
+        self.port.write("v".encode('utf-8'))
+        ack_code = self.port.read().decode('utf-8') # this should be 2
+
+        # receive the line
+        line = self.port.readline().decode('utf-8')
+
+        # divide the result by spaces
+        vels = line.split(" ")
+
+        return vels
+
+    def reset_robot(self):
+        """ Reset pid values, and global pos """
+
+        # flush clean the port
+        self.port.flush()
+
+        # write r code
+        self.port.write("r".encode('utf-8'))
+        ack_code = self.port.read().decode('utf-8') # this should be 3
+
+        # done
+
     def close_connection(self):
         """Close the connection"""
         if(self.port.isOpen()):
