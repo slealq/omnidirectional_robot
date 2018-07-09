@@ -1,0 +1,20 @@
+<package>
+  <name>omnidirectional_node</name>
+  <version>0.1.0</version>
+  <description>
+    This is a node wrapper to move omnidirectional base
+  </description>
+  <author>Stuart Leal</author>
+  <maintainer email="stuart.leal23@gmail.com" Stuart Leal</maintainer>
+  <license>GNU</license>
+  <url>https://github.com/slealq/omnidirectional_robot</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>omnidirectional_driver</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>nav_msgs</run_depend>
+  <run_depend>tf</run_depend>
+</package>
