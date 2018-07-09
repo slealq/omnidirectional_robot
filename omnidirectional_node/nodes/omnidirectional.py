@@ -31,6 +31,8 @@ class OmnidirectionalNode:
 
         # subscribe to cmd vel topic
         rospy.Subscriber("cmd_vel", Twist, self.cmd_vel_cb)
+        self.odomPub = rospy.Publisher('odom', Odometry, queue_size=10)
+        self.odomBroadcaster = TransformBroadcaster()
 
         # set vels list to 0
         self.cmd_vel = [0,0,0]
@@ -39,7 +41,9 @@ class OmnidirectionalNode:
         """ Spin function to call """
 
         # first time stamp
-        then = rospy.Time.now()
+        self.x = 0
+        self.y = 0
+        self.th = 0
 
         # init the odom message
         odom = Odometry(header=rospy.Header(frame_id="odom"), child_frame_id='base_link')
@@ -48,9 +52,51 @@ class OmnidirectionalNode:
         r = rospy.Rate(5)
 
         while not rospy.is_shutdown():
-            # get motor encoder values
+            # update then stamp
+            current_time = rospy.Time.now()
 
             # send updated movement codes
             self.robot.set_motors(self.cmd_vel[0], self.cmd_vel[1], self.cmd_vel[2])
 
-            #
+            # update global pos
+            pos = self.robot.read_global_pos() # get current pos
+            vels = self.robot.read_global_vel() # get current vel
+
+            # update x,y,th
+            self.x = pos[0]
+            self.y = pos[1]
+            self.th = pos[2]
+
+            # prepare tf from base_link to odom
+            quaternion = Quaternion()
+            quaternion.z = sin(self.th/2.0)
+            quaternion.w = cos(self.th/2.0)
+
+            # prepare odometry
+            odom.header.stamp = current_time
+            odom.pose.pose.position.x = self.x
+            odom.pose.pose.position.y = self.y
+            odom.pose.pose.position.z = 0
+            odom.pose.pose.orientation = quaternion
+            odom.twist.twist.linear.x = vels[0];
+            odom.twist.twist.linear.y = vels[1];
+            odom.twist.twist.angular.z = vels[2];
+
+            # publish everything
+            self.odomBroadcaster.sendTransform( (self.x, self.y, 0),
+                                                (quaternion.x, quaternion.y, quaternion.z, quaternion.w),
+                                                then,
+                                                "base_link",
+                                                "odom" )
+            self.odomPub.publish(odom)
+
+            # wait, then do it again
+            r.sleep()
+
+        # shutdown
+        self.robot.reset_robot()
+        self.robot.close_connection()
+
+if __name__ == "__main__":
+    robot = OmnidirectionaNode()
+    robot.spin()
