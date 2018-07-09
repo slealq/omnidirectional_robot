@@ -5,7 +5,7 @@
     This is a node wrapper to move omnidirectional base
   </description>
   <author>Stuart Leal</author>
-  <maintainer email="stuart.leal23@gmail.com" Stuart Leal</maintainer>
+  <maintainer email="stuart.leal23@gmail.com">Stuart Leal</maintainer>
   <license>GNU</license>
   <url>https://github.com/slealq/omnidirectional_robot</url>
 
