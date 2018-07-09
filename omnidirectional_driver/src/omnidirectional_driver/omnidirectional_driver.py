@@ -36,7 +36,8 @@ class omni():
         ack_code = self.port.readline().decode('utf-8')
 
     def read_global_pos(self):
-        """Read global pos odometry"""
+        """Read global pos odometry,
+        returns global x pos, global y pos, and global thetha pos"""
 
         # flush clean the port
         self.port.flush()
@@ -48,7 +49,10 @@ class omni():
         # receive the line
         line = self.port.readline().decode('utf-8')
 
-        print(line)
+        # divide the result by spaces
+        values = line.split(" ")
+
+        return values
 
     def close_connection(self):
         """Close the connection"""
