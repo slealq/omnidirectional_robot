@@ -29,11 +29,26 @@ class omni():
 
         # write m code for motos
         self.port.write("m".encode('utf-8'))
-        ack_code = self.port.read().decode('utf-8')
+        ack_code = self.port.read().decode('utf-8') # this should be 0
 
         # write vel commands
         self.port.write(str(str(x) + " " + str(y) + " " + str(omega) +"\n").encode('utf-8'))
         ack_code = self.port.readline().decode('utf-8')
+
+    def read_global_pos(self):
+        """Read global pos odometry"""
+
+        # flush clean the port
+        self.port.flush()
+
+        # write o code
+        self.port.write("o".encode('utf-8'))
+        ack_code = self.port.read().decode('utf-8') # this should be 1
+
+        # receive the line
+        line = self.port.readline().decode('utf-8')
+
+        print(line)
 
     def close_connection(self):
         """Close the connection"""
