@@ -52,7 +52,7 @@ class omni():
         # divide the result by spaces
         values = line.split(" ")
 
-        return values
+        return [float(x) for x in values]
 
     def read_global_vel(self):
         """Read global vel of the robot,
@@ -71,7 +71,7 @@ class omni():
         # divide the result by spaces
         vels = line.split(" ")
 
-        return vels
+        return [float(x) for x in vels]
 
     def reset_robot(self):
         """ Reset pid values, and global pos """
