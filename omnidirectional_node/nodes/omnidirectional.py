@@ -86,7 +86,7 @@ class OmnidirectionalNode:
             # publish everything
             self.odomBroadcaster.sendTransform( (self.x, self.y, 0),
                                                 (quaternion.x, quaternion.y, quaternion.z, quaternion.w),
-                                                then,
+                                                current_time,
                                                 "base_link",
                                                 "odom" )
             self.odomPub.publish(odom)
