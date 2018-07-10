@@ -5,8 +5,7 @@ Ros module for Arcos Lab omnidirectional robot.
 You'll need to install rospkg (In case you don't already have it) and pyserial in order to run this code.
 
     pew new ros
-    pip install pyserial 
-    pip install rospkg
+    pip install pyserial rospkg catkin_pkg numpy
   
 # Installation
 In order to use this ros driver, you need to copy this code in your catkin workspace:
