@@ -97,6 +97,9 @@ class OmnidirectionalNode:
         self.robot.reset_robot()
         self.robot.close_connection()
 
+    def cmdVelCb(self, req):
+        self.cmd_vel = [req.linear.x, req.linear.y, req.angular.z]
+
 if __name__ == "__main__":
     robot = OmnidirectionalNode()
     robot.spin()
