@@ -33,7 +33,9 @@ class omni():
 
         # write vel commands
         self.port.write(str(str(x) + " " + str(y) + " " + str(omega) +"\n").encode('utf-8'))
-        ack_code = self.port.readline().decode('utf-8')
+
+        # receive ack code should be 10
+        ack_code = self.port.read().decode('utf-8')
 
     def read_global_pos(self):
         """Read global pos odometry,
@@ -71,6 +73,9 @@ class omni():
         # receive the line
         line = self.port.readline().decode('utf-8')
 
+        # reveice the ack code
+        ack_code = self.port.read().decode('utf-8') # this should be 10
+
         # divide the result by spaces
         vels = line.split(" ")
 
@@ -86,6 +91,8 @@ class omni():
         self.port.write("r".encode('utf-8'))
         ack_code = self.port.read().decode('utf-8') # this should be 3
 
+        # reveice the ack code for end
+        ack_code = self.port.read().decode('utf-8') # this should be 10
         # done
 
     def close_connection(self):
