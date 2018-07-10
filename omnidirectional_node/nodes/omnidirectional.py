@@ -98,5 +98,5 @@ class OmnidirectionalNode:
         self.robot.close_connection()
 
 if __name__ == "__main__":
-    robot = OmnidirectionaNode()
+    robot = OmnidirectionalNode()
     robot.spin()
