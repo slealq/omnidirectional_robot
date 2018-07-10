@@ -49,6 +49,9 @@ class omni():
         # receive the line
         line = self.port.readline().decode('utf-8')
 
+        # reveice the ack code
+        ack_code = self.port.read().decode('utf-8') # this should be 10
+
         # divide the result by spaces
         values = line.split(" ")
 
