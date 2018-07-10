@@ -8,6 +8,7 @@ __author__ = "stuart.leal@ucr.ac.cr (Stuart Leal)"
 
 import roslib; roslib.load_manifest("omnidirectional_node")
 import rospy
+from math import sin,cos
 
 from geometry_msgs.msg import Quaternion
 from geometry_msgs.msg import Twist
