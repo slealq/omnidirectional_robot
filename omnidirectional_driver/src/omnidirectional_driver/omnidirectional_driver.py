@@ -27,15 +27,23 @@ class omni():
         # flush clean the port
         self.port.flush()
 
-        # write m code for motos
+        # write m code for motors
         self.port.write("m".encode('utf-8'))
-        ack_code = self.port.readline().decode('utf-8') # this should be 0
 
         # write vel commands
-        self.port.write(str(str(x) + " " + str(y) + " " + str(omega) +"\n").encode('utf-8'))
+        command = str(str(x) + " " + str(y) + " " + str(omega) + "\r\n").encode('utf-8')
+        self.port.write(command)
 
-        # receive ack code should be 10
-        ack_code = self.port.readline().decode('utf-8')
+        # capture the ack code
+        input = self.port.read(2)# capture the ack number which should be 10
+        ack_code = input.decode('utf-8')
+
+        # if ack is correct
+        if (ack_code == "10"):
+            return 1
+
+        # return error
+        return 0
 
     def read_global_pos(self):
         """Read global pos odometry,
@@ -46,19 +54,28 @@ class omni():
 
         # write o code
         self.port.write("o".encode('utf-8'))
-        ack_code = self.port.readline().decode('utf-8') # this should be 1
 
         # receive the line
         line = self.port.readline().decode('utf-8')
 
-        # reveice the ack code
-        ack_code = self.port.readline().decode('utf-8') # this should be 10
+        # receive the rest
+        input = self.port.read(1) # capture \r garbage
 
         # divide the result by spaces
         values = line.split(" ")
-        print(values)
 
-        return [float(x) for x in values]
+        # ack code is the last value
+        ack_code = values[-2]
+
+        # remove the last from the list
+        values = values[:-2]
+
+        # check ack code
+        if (ack_code == "11"):
+            return [float(x) for x in values]
+
+        # if not ack, the send empty list
+        return []
 
     def read_global_vel(self):
         """Read global vel of the robot,
@@ -69,18 +86,26 @@ class omni():
 
         # write v code
         self.port.write("v".encode('utf-8'))
-        ack_code = self.port.readline().decode('utf-8') # this should be 2
 
         # receive the line
         line = self.port.readline().decode('utf-8')
 
-        # reveice the ack code
-        ack_code = self.port.readline().decode('utf-8') # this should be 10
+        # receive the rest
+        input = self.port.read(1) # capture \r garbage
 
         # divide the result by spaces
         vels = line.split(" ")
 
-        return [float(x) for x in vels]
+        # take the last as ack code
+        ack_code = vels[-2]
+
+        # resize vels
+        vels = vels[:-2]
+
+        if (ack_code == "12"):
+            return [float(x) for x in vels]
+
+        return []
 
     def reset_robot(self):
         """ Reset pid values, and global pos """
@@ -90,11 +115,19 @@ class omni():
 
         # write r code
         self.port.write("r".encode('utf-8'))
-        ack_code = self.port.readline().decode('utf-8') # this should be 3
 
         # reveice the ack code for end
-        ack_code = self.port.readline().decode('utf-8') # this should be 10
-        # done
+        input = self.port.read(2)
+
+        # ack code
+        ack_code = input.decode('utf-8')
+
+        # check ack code
+        if (ack_code == "13"):
+            return 1
+
+        # return error if false
+        return 0
 
     def close_connection(self):
         """Close the connection"""
