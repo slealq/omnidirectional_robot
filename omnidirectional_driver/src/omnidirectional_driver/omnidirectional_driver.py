@@ -46,19 +46,28 @@ class omni():
 
         # write o code
         self.port.write("o".encode('utf-8'))
-        ack_code = self.port.readline().decode('utf-8') # this should be 1
 
         # receive the line
         line = self.port.readline().decode('utf-8')
 
-        # reveice the ack code
-        ack_code = self.port.readline().decode('utf-8') # this should be 10
+        # receive the rest
+        input = self.port.read(1) # capture \r garbage
 
         # divide the result by spaces
         values = line.split(" ")
-        print(values)
 
-        return [float(x) for x in values]
+        # ack code is the last value
+        ack_code = values[-2]
+
+        # remove the last from the list
+        values = values[:-2]
+
+        # check ack code
+        if (ack_code == "11"):
+            return [float(x) for x in values]
+
+        # if not ack, the send empty list
+        return []
 
     def read_global_vel(self):
         """Read global vel of the robot,
