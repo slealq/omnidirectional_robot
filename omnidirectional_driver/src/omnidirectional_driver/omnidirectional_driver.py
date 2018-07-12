@@ -31,7 +31,13 @@ class omni():
         self.port.write("m".encode('utf-8'))
 
         # write vel commands
-        command = str(str(x) + " " + str(y) + " " + str(omega) + "\r\n").encode('utf-8')
+        command = str(str("{0:.4f}".format(x))
+                      + " "
+                      + str("{0:.4f}".format(y))
+                      + " "
+                      + str("{0:.4f}".format(omega))
+                      + "\r\n").encode('utf-8')
+
         self.port.write(command)
 
         # capture the ack code
