@@ -46,7 +46,11 @@ class omni():
 
         # capture the ack code
         input = self.port.read(2)# capture the ack number which should be 10
-        ack_code = input.decode('utf-8')
+
+        try:
+            ack_code = input.decode('utf8');
+        except UnicodeDecodeError:
+            ack_code = ""
 
         # if ack is correct
         if (ack_code == "10"):
@@ -78,7 +82,10 @@ class omni():
 
         # capture the acknowledge code
         input = self.port.read(2)
-        ack_code = input.decode('utf8');
+        try:
+            ack_code = input.decode('utf8');
+        except UnicodeDecodeError:
+            ack_code = ""
 
         if ack_code == "11":
             return self.temp_values
@@ -130,8 +137,10 @@ class omni():
         # reveice the ack code for end
         input = self.port.read(2)
 
-        # ack code
-        ack_code = input.decode('utf-8')
+        try:
+            ack_code = input.decode('utf8');
+        except UnicodeDecodeError:
+            ack_code = ""
 
         # check ack code
         if (ack_code == "13"):

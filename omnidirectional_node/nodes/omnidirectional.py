@@ -57,7 +57,12 @@ class OmnidirectionalNode:
             current_time = rospy.Time.now()
 
             # send updated movement codes
-            self.robot.set_motors(self.cmd_vel[0], self.cmd_vel[1], self.cmd_vel[2])
+            ack_code = 0;
+            while ack_code == 0:
+                try:
+                    self.robot.set_motors(self.cmd_vel[0], self.cmd_vel[1], self.cmd_vel[2])
+                except:
+                    print("Error while asking for send command... Trying again")
 
             # update global pos
             pos = []
@@ -65,7 +70,7 @@ class OmnidirectionalNode:
                 try:
                     pos = self.robot.read_global_pos() # get current pos
                 except:
-                    print("Error while ascking for pos... Trying again")
+                    print("Error while asking for pos... Trying again")
 
             vels = []
             while not vels:
