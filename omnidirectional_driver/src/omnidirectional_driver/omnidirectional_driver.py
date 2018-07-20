@@ -44,16 +44,6 @@ class omni():
         self.buff = struct.pack('f', omega)
         self.port.write(self.buff)
 
-        # # write vel commands
-        # command = str(str("{0:.4f}".format(x))
-        #               + " "
-        #               + str("{0:.4f}".format(y))
-        #               + " "
-        #               + str("{0:.4f}".format(omega))
-        #               + "\r\n").encode('utf-8')
-
-        # self.port.write(command)
-
         # capture the ack code
         input = self.port.read(2)# capture the ack number which should be 10
         ack_code = input.decode('utf-8')
@@ -85,8 +75,7 @@ class omni():
 
             # unpack and save values to list
             self.temp_values.append(struct.unpack('f', input)[0])
-        # testing
-        print(self.temp_values)
+
         # capture the acknowledge code
         input = self.port.read(2)
         ack_code = input.decode('utf8');
@@ -116,12 +105,13 @@ class omni():
 
             # unpack and save values to list
             self.temp_values.append(struct.unpack('f', input)[0])
-        #testing
-        print(self.temp_values)
 
         # capture the acknowledge code
         input = self.port.read(2)
-        ack_code = input.decode('utf8');
+        try:
+            ack_code = input.decode('utf8');
+        except UnicodeDecodeError:
+            ack_code = ""
 
         if ack_code == "12":
             return self.temp_values
