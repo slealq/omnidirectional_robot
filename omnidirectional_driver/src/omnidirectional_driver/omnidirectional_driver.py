@@ -50,6 +50,7 @@ class omni():
         try:
             ack_code = input.decode('utf8');
         except UnicodeDecodeError:
+            print("set_motors failed...")
             ack_code = ""
 
         # if ack is correct
@@ -85,6 +86,7 @@ class omni():
         try:
             ack_code = input.decode('utf8');
         except UnicodeDecodeError:
+            print("read_global_pos failed...")
             ack_code = ""
 
         if ack_code == "11":
@@ -118,6 +120,7 @@ class omni():
         try:
             ack_code = input.decode('utf8');
         except UnicodeDecodeError:
+            print("read_global_vel failed...")
             ack_code = ""
 
         if ack_code == "12":
@@ -140,6 +143,7 @@ class omni():
         try:
             ack_code = input.decode('utf8');
         except UnicodeDecodeError:
+            print("reset_robot failed...")
             ack_code = ""
 
         # check ack code

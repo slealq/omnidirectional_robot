@@ -59,25 +59,16 @@ class OmnidirectionalNode:
             # send updated movement codes
             ack_code = 0;
             while ack_code == 0:
-                try:
-                    self.robot.set_motors(self.cmd_vel[0], self.cmd_vel[1], self.cmd_vel[2])
-                except:
-                    print("Error while asking for send command... Trying again")
+                ack_code = self.robot.set_motors(self.cmd_vel[0], self.cmd_vel[1], self.cmd_vel[2])
 
             # update global pos
             pos = []
             while not pos:
-                try:
-                    pos = self.robot.read_global_pos() # get current pos
-                except:
-                    print("Error while asking for pos... Trying again")
+                pos = self.robot.read_global_pos() # get current pos
 
             vels = []
             while not vels:
-                try:
-                    vels = self.robot.read_global_vel() # get current vel
-                except:
-                    print("Error while asking for vel... Trying again")
+                vels = self.robot.read_global_vel() # get current vel
 
             # update x,y,th
             self.x = pos[0]
