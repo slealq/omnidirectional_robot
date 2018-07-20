@@ -9,6 +9,7 @@ __author__ = "stuart.leal@ucr.ac.cr (Stuart Leal)"
 
 import serial
 import time
+import struct
 
 BASE_WIDTH = 290 # milimiters
 MAX_SPEED = 282.74 # milimeters / second
@@ -17,6 +18,7 @@ class omni():
 
     def __init__(self, port="/dev/ttyACM0"):
         self.port = serial.Serial(port, 115200, timeout=1)
+        self.temp_values = [];
 
     def test_connection(self):
         """Test connection"""
@@ -61,31 +63,23 @@ class omni():
         # write o code
         self.port.write("o".encode('utf-8'))
 
-        # receive the line
-        #line = self.port.readline().decode('utf-8')
+        # receive the three packs of bytes, containning pos
 
-        # receive the rest
-        input = self.port.read(4) # capture first float
+        for x in range(3):
+            # read 4 byes of float number
+            input = self.port.read(4)
 
-        print(input)
+            # unpack and save values to list
+            self.temp_values.append(struct.unpack('f', input)[0])
 
-        #input = self.port.read(1) # capture \r garbage
+        # capture the acknowledge code
+        input = self.port.read(2)
+        ack_code = input.decode('utf8');
 
-        # divide the result by spaces
-        #values = line.split(" ")
+        if ack_code == "11":
+            return self.temp_values
 
-        # ack code is the last value
-       # ack_code = values[-2]
-
-        # remove the last from the list
-        #values = values[:-2]
-
-        # check ack code
-        #if (ack_code == "11"):
-         #   return [float(x) for x in values]
-
-        # if not ack, the send empty list
-        #return []
+        return []
 
     def read_global_vel(self):
         """Read global vel of the robot,
