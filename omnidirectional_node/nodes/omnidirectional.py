@@ -60,8 +60,19 @@ class OmnidirectionalNode:
             self.robot.set_motors(self.cmd_vel[0], self.cmd_vel[1], self.cmd_vel[2])
 
             # update global pos
-            pos = self.robot.read_global_pos() # get current pos
-            vels = self.robot.read_global_vel() # get current vel
+            pos = []
+            while not pos:
+                try:
+                    pos = self.robot.read_global_pos() # get current pos
+                except:
+                    print("Error while ascking for pos... Trying again")
+
+            vels = []
+            while not vels:
+                try:
+                    vels = self.robot.read_global_vel() # get current vel
+                except:
+                    print("Error while asking for vel... Trying again")
 
             # update x,y,th
             self.x = pos[0]
