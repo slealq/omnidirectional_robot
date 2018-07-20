@@ -73,7 +73,8 @@ class omni():
 
             # unpack and save values to list
             self.temp_values.append(struct.unpack('f', input)[0])
-
+        # testing
+        print(self.temp_values)
         # capture the acknowledge code
         input = self.port.read(2)
         ack_code = input.decode('utf8');
@@ -103,6 +104,8 @@ class omni():
 
             # unpack and save values to list
             self.temp_values.append(struct.unpack('f', input)[0])
+        #testing
+        print(self.temp_values)
 
         # capture the acknowledge code
         input = self.port.read(2)
