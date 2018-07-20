@@ -50,25 +50,28 @@ class OmnidirectionalNode:
         odom = Odometry(header=rospy.Header(frame_id="odom"), child_frame_id='base_link')
 
         # set rate to mantain for scans
-        r = rospy.Rate(1)
+        r = rospy.Rate(5)
 
         while not rospy.is_shutdown():
             # update then stamp
             current_time = rospy.Time.now()
 
             # send updated movement codes
-            ack_code = 0;
-            while ack_code == 0:
-                ack_code = self.robot.set_motors(self.cmd_vel[0], self.cmd_vel[1], self.cmd_vel[2])
+            ack_code = self.robot.set_motors(self.cmd_vel[0], self.cmd_vel[1], self.cmd_vel[2])
+            if (ack_code == 0) :
+                continue
 
             # update global pos
             pos = []
-            while not pos:
-                pos = self.robot.read_global_pos() # get current pos
+            pos = self.robot.read_global_pos() # get current pos
+            if not pos:
+                continue
 
+            # update global vel
             vels = []
-            while not vels:
-                vels = self.robot.read_global_vel() # get current vel
+            vels = self.robot.read_global_vel() # get current vel
+            if not vels:
+                continue
 
             # update x,y,th
             self.x = pos[0]
