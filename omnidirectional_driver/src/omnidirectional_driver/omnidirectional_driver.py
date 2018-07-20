@@ -63,8 +63,10 @@ class omni():
         # write o code
         self.port.write("o".encode('utf-8'))
 
-        # receive the three packs of bytes, containning pos
+        # reset temp values
+        self.temp_values = []
 
+        # receive the three packs of bytes, containning pos
         for x in range(3):
             # read 4 byes of float number
             input = self.port.read(4)
@@ -91,23 +93,23 @@ class omni():
         # write v code
         self.port.write("v".encode('utf-8'))
 
-        # receive the line
-        line = self.port.readline().decode('utf-8')
+        # reset temp values
+        self.temp_values = []
 
-        # receive the rest
-        input = self.port.read(1) # capture \r garbage
+        # receive the three packs of bytes, containning pos
+        for x in range(3):
+            # read 4 byes of float number
+            input = self.port.read(4)
 
-        # divide the result by spaces
-        vels = line.split(" ")
+            # unpack and save values to list
+            self.temp_values.append(struct.unpack('f', input)[0])
 
-        # take the last as ack code
-        ack_code = vels[-2]
+        # capture the acknowledge code
+        input = self.port.read(2)
+        ack_code = input.decode('utf8');
 
-        # resize vels
-        vels = vels[:-2]
-
-        if (ack_code == "12"):
-            return [float(x) for x in vels]
+        if ack_code == "12":
+            return self.temp_values
 
         return []
 
