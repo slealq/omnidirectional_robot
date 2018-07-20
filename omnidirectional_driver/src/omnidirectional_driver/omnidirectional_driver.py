@@ -19,6 +19,7 @@ class omni():
     def __init__(self, port="/dev/ttyACM0"):
         self.port = serial.Serial(port, 115200, timeout=1)
         self.temp_values = [];
+        self.buff = None;
 
     def test_connection(self):
         """Test connection"""
@@ -32,15 +33,26 @@ class omni():
         # write m code for motors
         self.port.write("m".encode('utf-8'))
 
-        # write vel commands
-        command = str(str("{0:.4f}".format(x))
-                      + " "
-                      + str("{0:.4f}".format(y))
-                      + " "
-                      + str("{0:.4f}".format(omega))
-                      + "\r\n").encode('utf-8')
+        # write vels commands in bytes
 
-        self.port.write(command)
+        self.buff = struct.pack('f', x)
+        self.port.write(self.buff)
+
+        self.buff = struct.pack('f', y)
+        self.port.write(self.buff)
+
+        self.buff = struct.pack('f', omega)
+        self.port.write(self.buff)
+
+        # # write vel commands
+        # command = str(str("{0:.4f}".format(x))
+        #               + " "
+        #               + str("{0:.4f}".format(y))
+        #               + " "
+        #               + str("{0:.4f}".format(omega))
+        #               + "\r\n").encode('utf-8')
+
+        # self.port.write(command)
 
         # capture the ack code
         input = self.port.read(2)# capture the ack number which should be 10
