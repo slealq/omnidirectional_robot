@@ -59,7 +59,7 @@ class omni():
             return 1
 
         # clean the port if error occurs
-        self.port.read(4)
+        print(self.port.read(4))
 
         # return error
         return 0
@@ -98,7 +98,7 @@ class omni():
             return self.temp_values
 
         # flush clean the port
-        self.port.read(4)
+        print(self.port.read(4))
 
         return []
 
@@ -136,7 +136,7 @@ class omni():
             return self.temp_values
 
         # flush clean the port
-        self.port.read(4)
+        print(self.port.read(4))
 
         return []
 
@@ -163,7 +163,7 @@ class omni():
             return 1
 
         # clean the port if error occurs
-        self.port.read(4)
+        print(self.port.read(4))
 
         # return error if false
         return 0
