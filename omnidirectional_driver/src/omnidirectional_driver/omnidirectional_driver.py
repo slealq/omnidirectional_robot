@@ -17,7 +17,8 @@ MAX_SPEED = 282.74 # milimeters / second
 class omni():
 
     def __init__(self, port="/dev/ttyACM0"):
-        self.port = serial.Serial(port, 115200, timeout=1)
+        self.port = serial.Serial(port, 115200, timeout=0.0002)
+
         self.temp_values = [];
         self.buff = None;
 
@@ -83,11 +84,16 @@ class omni():
 
         # capture the acknowledge code
         input = self.port.read(2)
-        try:
-            ack_code = input.decode('utf8');
-        except UnicodeDecodeError:
-            print("read_global_pos failed...")
-            ack_code = ""
+       #try:
+        ack_code = input.decode('utf8');
+
+        input = self.port.read(1)
+        print(input)
+
+
+        #except UnicodeDecodeError:
+        #    print("read_global_pos failed...")
+        #    ack_code = ""
 
         if ack_code == "11":
             return self.temp_values
@@ -117,11 +123,16 @@ class omni():
 
         # capture the acknowledge code
         input = self.port.read(2)
+
+
         try:
             ack_code = input.decode('utf8');
         except UnicodeDecodeError:
             print("read_global_vel failed...")
             ack_code = ""
+
+        input = self.port.read(1)
+        print(input)
 
         if ack_code == "12":
             return self.temp_values
