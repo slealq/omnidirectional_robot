@@ -58,6 +58,9 @@ class omni():
         if (ack_code == "10"):
             return 1
 
+        # clean the port if error occurs
+        self.port.flush()
+
         # return error
         return 0
 
@@ -157,6 +160,9 @@ class omni():
         # check ack code
         if (ack_code == "13"):
             return 1
+
+        # clean the port if error occurs
+        self.port.flush()
 
         # return error if false
         return 0
