@@ -59,7 +59,7 @@ class omni():
             return 1
 
         # clean the port if error occurs
-        self.port.flush()
+        self.port.read(4)
 
         # return error
         return 0
@@ -98,7 +98,8 @@ class omni():
             return self.temp_values
 
         # flush clean the port
-        self.port.flush()
+        self.port.read(4)
+
         return []
 
     def read_global_vel(self):
@@ -135,7 +136,7 @@ class omni():
             return self.temp_values
 
         # flush clean the port
-        self.port.flush()
+        self.port.read(4)
 
         return []
 
@@ -162,7 +163,7 @@ class omni():
             return 1
 
         # clean the port if error occurs
-        self.port.flush()
+        self.port.read(4)
 
         # return error if false
         return 0
