@@ -84,20 +84,18 @@ class omni():
 
         # capture the acknowledge code
         input = self.port.read(2)
-       #try:
-        ack_code = input.decode('utf8');
+        try:
+            ack_code = input.decode('utf8');
 
-        input = self.port.read(1)
-        print(input)
-
-
-        #except UnicodeDecodeError:
-        #    print("read_global_pos failed...")
-        #    ack_code = ""
+        except UnicodeDecodeError:
+            print("read_global_pos failed...")
+            ack_code = ""
 
         if ack_code == "11":
             return self.temp_values
 
+        # flush clean the port
+        self.port.flush()
         return []
 
     def read_global_vel(self):
@@ -124,18 +122,17 @@ class omni():
         # capture the acknowledge code
         input = self.port.read(2)
 
-
         try:
             ack_code = input.decode('utf8');
         except UnicodeDecodeError:
             print("read_global_vel failed...")
             ack_code = ""
 
-        input = self.port.read(1)
-        print(input)
-
         if ack_code == "12":
             return self.temp_values
+
+        # flush clean the port
+        self.port.flush()
 
         return []
 
