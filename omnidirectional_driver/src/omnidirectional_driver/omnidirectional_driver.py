@@ -10,6 +10,7 @@ __author__ = "stuart.leal@ucr.ac.cr (Stuart Leal)"
 import serial
 import time
 import struct
+import crc16
 
 BASE_WIDTH = 290 # milimiters
 MAX_SPEED = 282.74 # milimeters / second
@@ -17,10 +18,26 @@ MAX_SPEED = 282.74 # milimeters / second
 class omni():
 
     def __init__(self, port="/dev/ttyACM0"):
-        self.port = serial.Serial(port, 115200, timeout=0.0002)
-
+        self.port = serial.Serial(port, 115200, timeout=0.001)
         self.temp_values = [];
         self.buff = None;
+        self.crc = None;
+
+    def read_checksum(self):
+        data = self.port.read(2)
+        if len(data)==2:
+            crc = (data[0]<<8) | data[1]
+            return crc
+        return 0
+
+    def write_checksum(self):
+       self.buff = struct.pack('H', self.crc)
+       self.port.write(self.buff)
+
+    def calculate_checksum(self, data):
+        self.crc = crc16.crc16xmodem(data)
+
+        return self.crc
 
     def test_connection(self):
         """Test connection"""
@@ -35,33 +52,22 @@ class omni():
         self.port.write("m".encode('utf-8'))
 
         # write vels commands in bytes
-
-        self.buff = struct.pack('f', x)
+        self.buff = struct.pack('fff', x, y, omega)
         self.port.write(self.buff)
 
-        self.buff = struct.pack('f', y)
-        self.port.write(self.buff)
+        # calculate checksum and write it
+        self.calculate_checksum(self.buff)
+        self.write_checksum()
 
-        self.buff = struct.pack('f', omega)
-        self.port.write(self.buff)
+        # receive stm checksum
+        received_crc = self.read_checksum()
 
-        # capture the ack code
-        input = self.port.read(2)# capture the ack number which should be 10
+        # receive second checksum
+        #second_crc = self.read_checksum()
 
-        try:
-            ack_code = input.decode('utf8');
-        except UnicodeDecodeError:
-            print("set_motors failed...")
-            ack_code = ""
-
-        # if ack is correct
-        if (ack_code == "10"):
+        if (received_crc == self.crc) :
             return 1
 
-        # clean the port if error occurs
-        print(self.port.read(4))
-
-        # return error
         return 0
 
     def read_global_pos(self):
@@ -85,22 +91,24 @@ class omni():
             # unpack and save values to list
             self.temp_values.append(struct.unpack('f', input)[0])
 
-        # capture the acknowledge code
-        input = self.port.read(2)
-        try:
-            ack_code = input.decode('utf8');
+        # # capture the acknowledge code
+        # input = self.port.read(2)
+        # try:
+        #     ack_code = input.decode('utf8');
 
-        except UnicodeDecodeError:
-            print("read_global_pos failed...")
-            ack_code = ""
+        # except UnicodeDecodeError:
+        #     print("read_global_pos failed...")
+        #     ack_code = ""
 
-        if ack_code == "11":
-            return self.temp_values
+        # if ack_code == "11":
+        #     return self.temp_values
 
-        # flush clean the port
-        print(self.port.read(4))
+        # # flush clean the port
+        # print(self.port.read(4))
 
-        return []
+        # return []
+
+        return self.temp_values
 
     def read_global_vel(self):
         """Read global vel of the robot,
@@ -123,22 +131,24 @@ class omni():
             # unpack and save values to list
             self.temp_values.append(struct.unpack('f', input)[0])
 
-        # capture the acknowledge code
-        input = self.port.read(2)
+        # # capture the acknowledge code
+        # input = self.port.read(2)
 
-        try:
-            ack_code = input.decode('utf8');
-        except UnicodeDecodeError:
-            print("read_global_vel failed...")
-            ack_code = ""
+        # try:
+        #     ack_code = input.decode('utf8');
+        # except UnicodeDecodeError:
+        #     print("read_global_vel failed...")
+        #     ack_code = ""
 
-        if ack_code == "12":
-            return self.temp_values
+        # if ack_code == "12":
+        #     return self.temp_values
 
-        # flush clean the port
-        print(self.port.read(4))
+        # # flush clean the port
+        # print(self.port.read(4))
 
-        return []
+        # return []
+
+        return self.temp_values
 
     def reset_robot(self):
         """ Reset pid values, and global pos """
@@ -149,24 +159,26 @@ class omni():
         # write r code
         self.port.write("r".encode('utf-8'))
 
-        # reveice the ack code for end
-        input = self.port.read(2)
+        # # reveice the ack code for end
+        # input = self.port.read(2)
 
-        try:
-            ack_code = input.decode('utf8');
-        except UnicodeDecodeError:
-            print("reset_robot failed...")
-            ack_code = ""
+        # try:
+        #     ack_code = input.decode('utf8');
+        # except UnicodeDecodeError:
+        #     print("reset_robot failed...")
+        #     ack_code = ""
 
-        # check ack code
-        if (ack_code == "13"):
-            return 1
+        # # check ack code
+        # if (ack_code == "13"):
+        #     return 1
 
-        # clean the port if error occurs
-        print(self.port.read(4))
+        # # clean the port if error occurs
+        # print(self.port.read(4))
 
-        # return error if false
-        return 0
+        # # return error if false
+        # return 0
+
+        return 1
 
     def close_connection(self):
         """Close the connection"""
