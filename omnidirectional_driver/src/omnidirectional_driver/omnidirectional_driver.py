@@ -18,7 +18,7 @@ MAX_SPEED = 282.74 # milimeters / second
 class omni():
 
     def __init__(self, port="/dev/ttyACM0"):
-        self.port = serial.Serial(port, 115200, timeout=0.001)
+        self.port = serial.Serial(port, 115200, timeout=0.01)
         self.temp_values = [];
         self.buff = None;
         self.crc = None;
@@ -31,8 +31,7 @@ class omni():
         return 0
 
     def write_checksum(self):
-       self.buff = struct.pack('H', self.crc)
-       self.port.write(self.buff)
+        self.port.write(struct.pack('H', self.crc))
 
     def calculate_checksum(self):
         self.crc = crc16.crc16xmodem(self.buff)
@@ -48,27 +47,26 @@ class omni():
         # flush clean the port
         self.port.flush()
 
-        # write m code for motors
-        self.port.write("m".encode('utf-8'))
+        # write complete command
+        self.buff = "m".encode('utf-8')
+        self.buff += struct.pack('fff', x, y, omega)
+        self.buff += struct.pack('B', 10)
+        self.buff += struct.pack('B', 0)
 
-        # write vels commands in bytes
-        self.buff = struct.pack('fff', x, y, omega)
+        # write hole command to stm
         self.port.write(self.buff)
 
         # calculate checksum and write it
         self.calculate_checksum()
         self.write_checksum()
 
-        # receive stm checksum
+        # receive back crc
         received_crc = self.read_checksum()
 
-        # receive second checksum
-        #second_crc = self.read_checksum()
-
-        if (received_crc == self.crc) :
+        if (received_crc == self.crc):
             return 1
-
-        return 0
+        else :
+            return 0
 
     def read_global_pos(self):
         """Read global pos odometry,
@@ -77,8 +75,45 @@ class omni():
         # flush clean the port
         self.port.flush()
 
-        # write o code
-        self.port.write("o".encode('utf-8'))
+        # write o code with end and checksum
+        self.buff = "o".encode('utf-8')
+        self.buff += struct.pack('B', 10)
+        self.buff += struct.pack('B', 0)
+
+        # write instruction
+        self.port.write(self.buff)
+
+        # calculate checksum and write it
+        self.calculate_checksum()
+        self.write_checksum()
+
+        # listen to the checksum that comes back
+        received_crc = self.read_checksum()
+
+        # now read the instructions in buff
+        self.buff += self.port.read(12)
+
+        # calculate local checksum
+        self.calculate_checksum()
+
+        # receive checksum from stm
+        received_crc = self.read_checksum()
+
+        if (received_crc == self.crc):
+            return list(struct.unpack('fff', self.buff[3:]))
+
+        else:
+            return []
+
+    def read_global_vel(self):
+        """Read global vel of the robot,
+        this should return vel x, vel y, vel theta """
+
+        # flush clean the port
+        self.port.flush()
+
+        # write v code
+        self.port.write("v".encode('utf-8'))
 
         # receive the three packs of bytes, containning pos
         self.buff = self.port.read(12)
@@ -94,46 +129,6 @@ class omni():
 
         else:
             return []
-
-    def read_global_vel(self):
-        """Read global vel of the robot,
-        this should return vel x, vel y, vel theta """
-
-        # flush clean the port
-        self.port.flush()
-
-        # write v code
-        self.port.write("v".encode('utf-8'))
-
-        # reset temp values
-        self.temp_values = []
-
-        # receive the three packs of bytes, containning pos
-        for x in range(3):
-            # read 4 byes of float number
-            input = self.port.read(4)
-
-            # unpack and save values to list
-            self.temp_values.append(struct.unpack('f', input)[0])
-
-        # # capture the acknowledge code
-        # input = self.port.read(2)
-
-        # try:
-        #     ack_code = input.decode('utf8');
-        # except UnicodeDecodeError:
-        #     print("read_global_vel failed...")
-        #     ack_code = ""
-
-        # if ack_code == "12":
-        #     return self.temp_values
-
-        # # flush clean the port
-        # print(self.port.read(4))
-
-        # return []
-
-        return self.temp_values
 
     def reset_robot(self):
         """ Reset pid values, and global pos """
