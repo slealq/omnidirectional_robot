@@ -90,6 +90,10 @@ class omni():
         # listen to the checksum that comes back
         received_crc = self.read_checksum()
 
+        # check if it was sent ok, if not break here
+        if not (received_crc == self.crc):
+            return []
+
         # now read the instructions in buff
         self.buff += self.port.read(12)
 
@@ -112,20 +116,33 @@ class omni():
         # flush clean the port
         self.port.flush()
 
-        # write v code
-        self.port.write("v".encode('utf-8'))
+        # write v code with end and checksum
+        self.buff = "v".encode('utf-8')
+        self.buff += struct.pack('B', 10)
+        self.buff += struct.pack('B', 0)
 
-        # receive the three packs of bytes, containning pos
-        self.buff = self.port.read(12)
+        # write instruction
+        self.port.write(self.buff)
 
-        # calculate local checksum
+        # calculate checksum of sent
         self.calculate_checksum()
+        self.write_checksum()
 
-        # receive checksum from stm
+        # listen to the checksum that comes back
+        received_crc = self.read_checksum()
+
+        # check it was sent ok, if not break here
+        if not (received_crc == self.crc) :
+            return []
+
+        # now read the instruction in buff
+        self.buff += self.port.read(12)
+
+        # calculate local checksum with hole instruction
         received_crc = self.read_checksum()
 
         if (received_crc == self.crc):
-            return list(struct.unpack('fff', self.buff))
+            return list(struct.unpack('fff', self.buff[3:]))
 
         else:
             return []
@@ -137,28 +154,26 @@ class omni():
         self.port.flush()
 
         # write r code
-        self.port.write("r".encode('utf-8'))
+        self.buff = "r".encode('utf-8')
+        self.buff += struct.pack('B', 10)
+        self.buff += struct.pack('B', 0)
 
-        # # reveice the ack code for end
-        # input = self.port.read(2)
+        # write instruction
+        self.port.write(self.buff)
 
-        # try:
-        #     ack_code = input.decode('utf8');
-        # except UnicodeDecodeError:
-        #     print("reset_robot failed...")
-        #     ack_code = ""
+        # calculate local checksum
+        self.calculate_checksum()
+        self.write_checksum()
 
-        # # check ack code
-        # if (ack_code == "13"):
-        #     return 1
+        # listen to the checksum that comes back
+        received_crc = self.read_checksum()
 
-        # # clean the port if error occurs
-        # print(self.port.read(4))
+        # check if it was ok or not
+        if (received_crc == self.crc) :
+            return 1
 
-        # # return error if false
-        # return 0
-
-        return 1
+        else:
+            return 0
 
     def close_connection(self):
         """Close the connection"""
