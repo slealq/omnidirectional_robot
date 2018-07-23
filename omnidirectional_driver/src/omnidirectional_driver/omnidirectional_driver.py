@@ -34,8 +34,8 @@ class omni():
        self.buff = struct.pack('H', self.crc)
        self.port.write(self.buff)
 
-    def calculate_checksum(self, data):
-        self.crc = crc16.crc16xmodem(data)
+    def calculate_checksum(self):
+        self.crc = crc16.crc16xmodem(self.buff)
 
         return self.crc
 
@@ -56,7 +56,7 @@ class omni():
         self.port.write(self.buff)
 
         # calculate checksum and write it
-        self.calculate_checksum(self.buff)
+        self.calculate_checksum()
         self.write_checksum()
 
         # receive stm checksum
@@ -80,35 +80,20 @@ class omni():
         # write o code
         self.port.write("o".encode('utf-8'))
 
-        # reset temp values
-        self.temp_values = []
-
         # receive the three packs of bytes, containning pos
-        for x in range(3):
-            # read 4 byes of float number
-            input = self.port.read(4)
+        self.buff = self.port.read(12)
 
-            # unpack and save values to list
-            self.temp_values.append(struct.unpack('f', input)[0])
+        # calculate local checksum
+        self.calculate_checksum()
 
-        # # capture the acknowledge code
-        # input = self.port.read(2)
-        # try:
-        #     ack_code = input.decode('utf8');
+        # receive checksum from stm
+        received_crc = self.read_checksum()
 
-        # except UnicodeDecodeError:
-        #     print("read_global_pos failed...")
-        #     ack_code = ""
+        if (received_crc == self.crc):
+            return list(struct.unpack('fff', self.buff))
 
-        # if ack_code == "11":
-        #     return self.temp_values
-
-        # # flush clean the port
-        # print(self.port.read(4))
-
-        # return []
-
-        return self.temp_values
+        else:
+            return []
 
     def read_global_vel(self):
         """Read global vel of the robot,
