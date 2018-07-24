@@ -28,8 +28,12 @@ class omni():
         self.port.flushOutput()
 
     def read_checksum(self):
-        data = int(self.port.read(2))
-        if len(data)==2:
+        input = self.port.read(2)
+
+        if len(input)==2:
+            data = struct.unpack('BB', input)
+            # print(data)
+
             crc = (data[0]<<8) | data[1]
             return crc
         return 0
