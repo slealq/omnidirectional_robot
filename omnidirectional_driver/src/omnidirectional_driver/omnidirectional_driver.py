@@ -18,7 +18,7 @@ MAX_SPEED = 282.74 # milimeters / second
 class omni():
 
     def __init__(self, port="/dev/ttyACM0"):
-        self.port = serial.Serial(port, 115200, timeout=0.001)
+        self.port = serial.Serial(port, 115200, timeout=0.0001)
         self.temp_values = [];
         self.buff = None;
         self.crc = None;
