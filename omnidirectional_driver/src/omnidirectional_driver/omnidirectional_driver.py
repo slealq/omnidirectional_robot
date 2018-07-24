@@ -28,7 +28,7 @@ class omni():
         self.port.flushOutput()
 
     def read_checksum(self):
-        data = self.port.read(2)
+        data = int(self.port.read(2))
         if len(data)==2:
             crc = (data[0]<<8) | data[1]
             return crc
