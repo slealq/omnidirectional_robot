@@ -18,10 +18,14 @@ MAX_SPEED = 282.74 # milimeters / second
 class omni():
 
     def __init__(self, port="/dev/ttyACM0"):
-        self.port = serial.Serial(port, 115200, timeout=0.01)
+        self.port = serial.Serial(port, 115200, timeout=0.001)
         self.temp_values = [];
         self.buff = None;
         self.crc = None;
+
+    def cleanup(self):
+        self.port.flushInput()
+        self.port.flushOutput()
 
     def read_checksum(self):
         data = self.port.read(2)
@@ -44,9 +48,6 @@ class omni():
     def set_motors(self, x, y, omega):
         """Basic function that will send commands"""
 
-        # flush clean the port
-        self.port.flush()
-
         # write complete command
         self.buff = "m".encode('utf-8')
         self.buff += struct.pack('fff', x, y, omega)
@@ -66,6 +67,7 @@ class omni():
         if (received_crc == self.crc):
             return 1
         else :
+            self.cleanup()
             return 0
 
     def read_global_pos(self):
@@ -73,7 +75,7 @@ class omni():
         returns global x pos, global y pos, and global thetha pos"""
 
         # flush clean the port
-        self.port.flush()
+        #self.port.flush()
 
         # write o code with end and checksum
         self.buff = "o".encode('utf-8')
@@ -92,6 +94,8 @@ class omni():
 
         # check if it was sent ok, if not break here
         if not (received_crc == self.crc):
+            print("Error in pos before hand...")
+            self.cleanup()
             return []
 
         # now read the instructions in buff
@@ -107,6 +111,7 @@ class omni():
             return list(struct.unpack('fff', self.buff[3:]))
 
         else:
+            self.cleanup()
             return []
 
     def read_global_vel(self):
@@ -114,7 +119,7 @@ class omni():
         this should return vel x, vel y, vel theta """
 
         # flush clean the port
-        self.port.flush()
+        #self.port.flush()
 
         # write v code with end and checksum
         self.buff = "v".encode('utf-8')
@@ -133,10 +138,15 @@ class omni():
 
         # check it was sent ok, if not break here
         if not (received_crc == self.crc) :
+            print("Error in vel before hand...")
+            self.cleanup()
             return []
 
         # now read the instruction in buff
         self.buff += self.port.read(12)
+
+        # calculate local checksum
+        self.calculate_checksum()
 
         # calculate local checksum with hole instruction
         received_crc = self.read_checksum()
@@ -145,13 +155,14 @@ class omni():
             return list(struct.unpack('fff', self.buff[3:]))
 
         else:
+            self.cleanup()
             return []
 
     def reset_robot(self):
         """ Reset pid values, and global pos """
 
         # flush clean the port
-        self.port.flush()
+        #self.port.flush()
 
         # write r code
         self.buff = "r".encode('utf-8')
@@ -173,6 +184,7 @@ class omni():
             return 1
 
         else:
+            self.cleanup()
             return 0
 
     def close_connection(self):
