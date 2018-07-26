@@ -60,7 +60,7 @@ class omni():
 
         # buffer that is going to be writed
         print("In set motors, writed buff:")
-        print(self.buff)
+        print(repr("%s" %self.buff))
 
         # write hole command to stm
         self.port.write(self.buff)
@@ -72,9 +72,9 @@ class omni():
         # receive back crc
         received_crc = self.read_checksum()
         print("In set motors, received checksum")
-        print(received_crc)
+        print(repr("%s" %received_crc))
         print("In set motors, own checksum")
-        print(self.crc)
+        print(repr("%s" %self.crc))
 
         if (received_crc == self.crc):
             return 1
@@ -95,7 +95,7 @@ class omni():
         self.buff += struct.pack('B', 0)
 
         print("In read global pos, sent buff")
-        print(self.buff)
+        print(repr("%s" %self.buff))
 
         # write instruction
         self.port.write(self.buff)
@@ -109,10 +109,10 @@ class omni():
 
         # print received crc
         print("In read global pos, received crc")
-        print(received_crc)
+        print(repr("%s" %received_crc))
 
         print("In read global pos, own crc")
-        print(self.crc)
+        print(repr("%s" %self.crc))
 
         # check if it was sent ok, if not break here
         if not (received_crc == self.crc):
@@ -124,19 +124,19 @@ class omni():
         self.buff += self.port.read(12)
 
         print("In read global pos, read 12 bytes")
-        print(self.buff)
+        print(repr("%s" %self.buff))
 
         # calculate local checksum
         self.calculate_checksum()
 
         print("In read global pos, own checksum")
-        print(self.crc)
+        print(repr("%s" %self.crc))
 
         # receive checksum from stm
         received_crc = self.read_checksum()
 
         print("In read global pos, received crc")
-        print(received_crc)
+        print(repr("%s" %received_crc))
 
         if (received_crc == self.crc):
             return list(struct.unpack('fff', self.buff[3:]))
@@ -162,20 +162,20 @@ class omni():
 
         # print buff
         print("In read global vel, own buffer")
-        print(self.buff)
+        print(repr("%s" %self.buff))
 
         # calculate checksum of sent
         self.calculate_checksum()
         self.write_checksum()
 
         print("In read global vel, own checksum")
-        print(self.crc)
+        print(repr("%s" %self.crc))
 
         # listen to the checksum that comes back
         received_crc = self.read_checksum()
 
         print("In read global vel, received crc")
-        print(received_crc)
+        print(repr("%s" %received_crc))
 
         # check it was sent ok, if not break here
         if not (received_crc == self.crc) :
@@ -188,19 +188,19 @@ class omni():
 
         # received buff
         print("In read global vel, received buff")
-        print(self.buff)
+        print(repr("%s" %self.buff))
 
         # calculate local checksum
         self.calculate_checksum()
 
         print("In read global vel, own checksum ")
-        print(self.crc)
+        print(repr("%s" %self.crc))
 
         # calculate local checksum with hole instruction
         received_crc = self.read_checksum()
 
         print("In read global vel, received crc")
-        print(received_crc)
+        print(repr("%s" %received_crc))
 
 
         if (received_crc == self.crc):
