@@ -19,6 +19,7 @@ class omni():
 
     def __init__(self, port="/dev/ttyACM0"):
         self.port = serial.Serial(port, 500000, timeout=0.01)
+        self.port.write_timeout = 0.01
         self.temp_values = [];
         self.buff = None;
         self.crc = None;
@@ -39,7 +40,14 @@ class omni():
         return 0
 
     def write_checksum(self):
-        self.port.write(struct.pack('H', self.crc))
+        self.write_wtimeout(struct.pack('H', self.crc))
+
+    def write_wtimeout(self, data):
+        try:
+            self.port.write(data)
+        except serial.serialutil.SerialTimeoutException:
+            print("\t\t\t\t\t\tException for write")
+           # self.write_wtimeout(data)
 
     def calculate_checksum(self):
         self.crc = crc16.crc16xmodem(self.buff)
@@ -63,7 +71,7 @@ class omni():
         print(repr("%s" %self.buff))
 
         # write hole command to stm
-        self.port.write(self.buff)
+        self.write_wtimeout(self.buff)
 
         # calculate checksum and write it
         self.calculate_checksum()
@@ -98,7 +106,7 @@ class omni():
         print(repr("%s" %self.buff))
 
         # write instruction
-        self.port.write(self.buff)
+        self.write_wtimeout(self.buff)
 
         # calculate checksum and write it
         self.calculate_checksum()
@@ -158,7 +166,7 @@ class omni():
         self.buff += struct.pack('B', 0)
 
         # write instruction
-        self.port.write(self.buff)
+        self.write_wtimeout(self.buff)
 
         # print buff
         print("In read global vel, own buffer")
@@ -222,7 +230,7 @@ class omni():
         self.buff += struct.pack('B', 0)
 
         # write instruction
-        self.port.write(self.buff)
+        self.write_wtimeout(self.buff)
 
         # calculate local checksum
         self.calculate_checksum()
