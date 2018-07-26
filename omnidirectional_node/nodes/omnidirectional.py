@@ -50,7 +50,7 @@ class OmnidirectionalNode:
         odom = Odometry(header=rospy.Header(frame_id="odom"), child_frame_id='base_link')
 
         # set rate to mantain for scans
-        r = rospy.Rate(200)
+        r = rospy.Rate(100)
 
         while not rospy.is_shutdown():
             # update then stamp
