@@ -150,7 +150,7 @@ class OmnidirectionalNode:
             # # odom.twist.twist.angular.z = vels[2];
 
             # # publish everything
-            # self.odomBroadcaster.sendTransform( (self.x, self.y, 0),
+            self.odomBroadcaster.sendTransform( (self.x, self.y, 0),
                                                 odom_quat,
                                                 self.current_time,
                                                 "base_link",
