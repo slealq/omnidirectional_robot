@@ -129,6 +129,7 @@ class OmnidirectionalNode:
             # #                                    odom_trans.header.frame_id )
 
             # prepare odometry
+            odom.header.stamp = self.current_time
             odom.pose.pose.position.x = self.x
             odom.pose.pose.position.y = self.y
             odom.pose.pose.position.z = 0.0
