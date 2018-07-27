@@ -88,14 +88,14 @@ class OmnidirectionalNode:
 
             # compute odometry given the velocities of the robot
             # this maybe should be done in the stm
-            self.dt = (self.current_time - self.last_time).to_sec()
-            self.delta_x = (vels[0] * cos(self.th) - vels[1] * sin(self.th)) * self.dt;
-            self.delta_y = (vels[0] * sin(self.th) + vels[1] * cos(self.th)) * self.dt;
-            self.delta_th = vels[2] * self.dt;
+            # self.dt = (self.current_time - self.last_time).to_sec()
+            # self.delta_x = (vels[0] * cos(self.th) - vels[1] * sin(self.th)) * self.dt;
+            # self.delta_y = (vels[0] * sin(self.th) + vels[1] * cos(self.th)) * self.dt;
+            # self.delta_th = vels[2] * self.dt;
 
-            self.x += self.delta_x;
-            self.y += self.delta_y;
-            self.th += self.delta_th;
+            self.x = pos[0];
+            self.y = pos[1];
+            self.th = pos[2];
 
             # create quaternion from yaw
             odom_quat = tf.transformations.quaternion_from_euler(0,0,self.th)
