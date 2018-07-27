@@ -87,18 +87,18 @@ class OmnidirectionalNode:
             # compute odometry given the velocities of the robot
             # this maybe should be done in the stm
             self.dt = (self.current_time - self.last_time).to_sec()
-            self.delta_x = (vels[0] * cos(th) - vels[1] * sin(th)) * dt;
-            self.delta_y = (vels[0] * sin(th) + vels[1] * cos(th)) * dt;
+            self.delta_x = (vels[0] * cos(self.th) - vels[1] * sin(self.th)) * dt;
+            self.delta_y = (vels[0] * sin(self.th) + vels[1] * cos(self.th)) * dt;
             self.delta_th = vels[2] * dt;
 
-            x += delta_x;
-            y += delta_y;
-            th += delta_th;
+            self.x += delta_x;
+            self.y += delta_y;
+            self.th += delta_th;
 
-            # update x,y,th
-            self.x = pos[0]
-            self.y = pos[1]
-            self.th = pos[2]
+            # # update x,y,th
+            # self.x = pos[0]
+            # self.y = pos[1]
+            # self.th = pos[2]
 
             # prepare tf from base_link to odom
             #quaternion = Quaternion()
@@ -106,7 +106,7 @@ class OmnidirectionalNode:
             #quaternion.w = cos(self.th/2.0)
 
             # create quaternion from yaw
-            odom_quat = tf.transformations.quaternion_from_euler(0,0,th)
+            odom_quat = tf.transformations.quaternion_from_euler(0,0,self.th)
 
             # publish transform over tf
             odom_trans = TransformStamped()
@@ -115,15 +115,15 @@ class OmnidirectionalNode:
             odom_trans.header.frame_id = "odom"
             odom_trans.child_frame_id = "base_link"
 
-            odom_trans.transform.translation.x = x
-            odom_trans.transform.translation.y = y
+            odom_trans.transform.translation.x = self.x
+            odom_trans.transform.translation.y = self.y
             odom_trans.transform.translation.z = 0.0
             odom_trans.transform.rotation = odom_quat
 
             # send transform
             self.odomBroadcaster.sendTransform(odom_trans)
-            odom.pose.pose.position.x = x
-            odom.pose.pose.position.y = y
+            odom.pose.pose.position.x = self.x
+            odom.pose.pose.position.y = self.y
             odom.pose.pose.position.z = 0.0
             odom.pose.pose.orientation = odom_quat
 
