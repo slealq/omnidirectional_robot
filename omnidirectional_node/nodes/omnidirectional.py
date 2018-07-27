@@ -128,26 +128,27 @@ class OmnidirectionalNode:
             # #                                    odom_trans.child_frame_id,
             # #                                    odom_trans.header.frame_id )
 
+            # prepare odometry
+            odom.pose.pose.position.x = self.x
+            odom.pose.pose.position.y = self.y
+            odom.pose.pose.position.z = 0.0
+            odom.pose.pose.orientation = odom_quat
+
+            # set the velocity
+            odom.child_frame_id = "base_link"
+            odom.twist.twist.linear.x = vels[0]
+            odom.twist.twist.linear.y = vels[1]
+            odom.twist.twist.angular.z = vels[2]
+
+            # prepare odometry
+            # odom.header.stamp = self.current_time
             # odom.pose.pose.position.x = self.x
             # odom.pose.pose.position.y = self.y
-            # odom.pose.pose.position.z = 0.0
-            # odom.pose.pose.orientation = odom_quat
-
-            # # set the velocity
-            # odom.child_frame_id = "base_link"
-            # odom.twist.twist.linear.x = vels[0]
-            # odom.twist.twist.linear.y = vels[1]
-            # odom.twist.twist.angular.z = vels[2]
-
-            # # # prepare odometry
-            # # odom.header.stamp = self.current_time
-            # # odom.pose.pose.position.x = self.x
-            # # odom.pose.pose.position.y = self.y
-            # # odom.pose.pose.position.z = 0
-            # # odom.pose.pose.orientation = quaternion
-            # # odom.twist.twist.linear.x = vels[0];
-            # # odom.twist.twist.linear.y = vels[1];
-            # # odom.twist.twist.angular.z = vels[2];
+            # odom.pose.pose.position.z = 0
+            # odom.pose.pose.orientation = quaternion
+            # odom.twist.twist.linear.x = vels[0];
+            # odom.twist.twist.linear.y = vels[1];
+            # odom.twist.twist.angular.z = vels[2];
 
             # # publish everything
             self.odomBroadcaster.sendTransform( (self.x, self.y, 0),
