@@ -27,7 +27,7 @@ class OmnidirectionalNode:
         rospy.init_node('omnidirectional odometry_publisher')
 
         # set communication port
-        self.port = rospy.get_param("port", "/dev/ttyACM0")
+        self.port = rospy.get_param("~port", "/dev/ttyACM1")
         rospy.loginfo("Using port: %s"%(self.port))
 
         # use driver for robot operation
