@@ -13,6 +13,7 @@ from math import cos, sin
 from geometry_msgs.msg import Quaternion
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import TransformStamped
+from geometry_msgs.msg import Pose
 from nav_msgs.msg import Odometry
 from tf.broadcaster import TransformBroadcaster
 import tf
@@ -133,10 +134,13 @@ class OmnidirectionalNode:
             odom.pose.pose.position.x = self.x
             odom.pose.pose.position.y = self.y
             odom.pose.pose.position.z = 0.0
-            odom.pose.pose.orientation = odom_quat
+            odom.pose.pose.orientation = Quaternion(*odom_quat)
+            #odom.pose.pose = Pose(Point(x, y, 0.), Quaternion(*odom_quat))
 
-            # set the velocity
-            odom.child_frame_id = "base_link"
+
+
+            # # set the velocity
+            #odom.child_frame_id = "base_link"
             odom.twist.twist.linear.x = vels[0]
             odom.twist.twist.linear.y = vels[1]
             odom.twist.twist.angular.z = vels[2]
