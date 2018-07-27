@@ -87,9 +87,9 @@ class OmnidirectionalNode:
             # compute odometry given the velocities of the robot
             # this maybe should be done in the stm
             self.dt = (self.current_time - self.last_time).to_sec()
-            self.delta_x = (vels[0] * cos(self.th) - vels[1] * sin(self.th)) * dt;
-            self.delta_y = (vels[0] * sin(self.th) + vels[1] * cos(self.th)) * dt;
-            self.delta_th = vels[2] * dt;
+            self.delta_x = (vels[0] * cos(self.th) - vels[1] * sin(self.th)) * self.dt;
+            self.delta_y = (vels[0] * sin(self.th) + vels[1] * cos(self.th)) * self.dt;
+            self.delta_th = vels[2] * self.dt;
 
             self.x += delta_x;
             self.y += delta_y;
