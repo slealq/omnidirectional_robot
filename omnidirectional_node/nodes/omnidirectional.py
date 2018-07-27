@@ -91,9 +91,9 @@ class OmnidirectionalNode:
             self.delta_y = (vels[0] * sin(self.th) + vels[1] * cos(self.th)) * self.dt;
             self.delta_th = vels[2] * self.dt;
 
-            self.x += delta_x;
-            self.y += delta_y;
-            self.th += delta_th;
+            self.x += self.delta_x;
+            self.y += self.delta_y;
+            self.th += self.delta_th;
 
             # # update x,y,th
             # self.x = pos[0]
