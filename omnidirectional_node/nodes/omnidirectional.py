@@ -110,51 +110,51 @@ class OmnidirectionalNode:
             odom_quat = tf.transformations.quaternion_from_euler(0,0,self.th)
 
             # publish transform over tf
-            odom_trans = TransformStamped()
+            # odom_trans = TransformStamped()
 
-            odom_trans.header.stamp = self.current_time
-            odom_trans.header.frame_id = "odom"
-            odom_trans.child_frame_id = "base_link"
+            # odom_trans.header.stamp = self.current_time
+            # odom_trans.header.frame_id = "odom"
+            # odom_trans.child_frame_id = "base_link"
 
-            odom_trans.transform.translation.x = self.x
-            odom_trans.transform.translation.y = self.y
-            odom_trans.transform.translation.z = 0.0
-            odom_trans.transform.rotation = odom_quat
+            # odom_trans.transform.translation.x = self.x
+            # odom_trans.transform.translation.y = self.y
+            # odom_trans.transform.translation.z = 0.0
+            # odom_trans.transform.rotation = odom_quat
 
-            # send transform
-            self.odomBroadcaster.sendTransform(odom_trans.transform.translation,
-                                               odom_trans.transform.rotation,
-                                               odom_trans.header.stamp,
-                                               odom_trans.child_frame_id,
-                                               odom_trans.header.frame_id )
+            # # # send transform
+            # # self.odomBroadcaster.sendTransform(odom_trans.transform.translation,
+            # #                                    odom_trans.transform.rotation,
+            # #                                    odom_trans.header.stamp,
+            # #                                    odom_trans.child_frame_id,
+            # #                                    odom_trans.header.frame_id )
 
-            odom.pose.pose.position.x = self.x
-            odom.pose.pose.position.y = self.y
-            odom.pose.pose.position.z = 0.0
-            odom.pose.pose.orientation = odom_quat
-
-            # set the velocity
-            odom.child_frame_id = "base_link"
-            odom.twist.twist.linear.x = vels[0]
-            odom.twist.twist.linear.y = vels[1]
-            odom.twist.twist.angular.z = vels[2]
-
-            # # prepare odometry
-            # odom.header.stamp = self.current_time
             # odom.pose.pose.position.x = self.x
             # odom.pose.pose.position.y = self.y
-            # odom.pose.pose.position.z = 0
-            # odom.pose.pose.orientation = quaternion
-            # odom.twist.twist.linear.x = vels[0];
-            # odom.twist.twist.linear.y = vels[1];
-            # odom.twist.twist.angular.z = vels[2];
+            # odom.pose.pose.position.z = 0.0
+            # odom.pose.pose.orientation = odom_quat
+
+            # # set the velocity
+            # odom.child_frame_id = "base_link"
+            # odom.twist.twist.linear.x = vels[0]
+            # odom.twist.twist.linear.y = vels[1]
+            # odom.twist.twist.angular.z = vels[2]
+
+            # # # prepare odometry
+            # # odom.header.stamp = self.current_time
+            # # odom.pose.pose.position.x = self.x
+            # # odom.pose.pose.position.y = self.y
+            # # odom.pose.pose.position.z = 0
+            # # odom.pose.pose.orientation = quaternion
+            # # odom.twist.twist.linear.x = vels[0];
+            # # odom.twist.twist.linear.y = vels[1];
+            # # odom.twist.twist.angular.z = vels[2];
 
             # # publish everything
             # self.odomBroadcaster.sendTransform( (self.x, self.y, 0),
-            #                                     (quaternion.x, quaternion.y, quaternion.z, quaternion.w),
-            #                                     self.current_time,
-            #                                     "base_link",
-            #                                     "odom" )
+                                                odom_quat,
+                                                self.current_time,
+                                                "base_link",
+                                                "odom" )
 
             self.odomPub.publish(odom)
 
