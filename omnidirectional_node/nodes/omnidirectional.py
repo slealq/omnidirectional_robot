@@ -122,7 +122,12 @@ class OmnidirectionalNode:
             odom_trans.transform.rotation = odom_quat
 
             # send transform
-            self.odomBroadcaster.sendTransform(odom_trans)
+            self.odomBroadcaster.sendTransform(odom_trans.transform.translation,
+                                               odom_trans.transform.rotation,
+                                               odom_trans.header.stamp,
+                                               odom_trans.child_frame_id,
+                                               odom_trans.header.frame_id )
+
             odom.pose.pose.position.x = self.x
             odom.pose.pose.position.y = self.y
             odom.pose.pose.position.z = 0.0
