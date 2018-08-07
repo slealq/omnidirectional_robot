@@ -18,8 +18,8 @@ MAX_SPEED = 282.74 # milimeters / second
 class omni():
 
     def __init__(self, port="/dev/ttyACM0"):
-        self.port = serial.Serial(port, 500000, timeout=0.01)
-        self.port.write_timeout = 0.01
+        self.port = serial.Serial(port, 500000, timeout=0.02)
+        self.port.write_timeout = 0.02
         self.temp_values = [];
         self.buff = None;
         self.crc = None;
@@ -213,6 +213,199 @@ class omni():
 
         if (received_crc == self.crc):
             return list(struct.unpack('fff', self.buff[3:]))
+
+        else:
+            self.cleanup()
+            return []
+
+    def read_encoder_vel(self):
+        """Read each encoder vel,
+        this should return vel motorrl, vel motorfr, vel motorrr, vel motorfl """
+
+        # flush clean the port
+        #self.port.flush()
+
+        # write v code with end and checksum
+        self.buff = "e".encode('utf-8')
+        self.buff += struct.pack('B', 10)
+        self.buff += struct.pack('B', 0)
+
+        # write instruction
+        self.write_wtimeout(self.buff)
+
+        # print buff
+        print("In read encoder vel, own buffer")
+        print(repr("%s" %self.buff))
+
+        # calculate checksum of sent
+        self.calculate_checksum()
+        self.write_checksum()
+
+        print("In read encoder vel, own checksum")
+        print(repr("%s" %self.crc))
+
+        # listen to the checksum that comes back
+        received_crc = self.read_checksum()
+
+        print("In read encoder vel, received crc")
+        print(repr("%s" %received_crc))
+
+        # check it was sent ok, if not break here
+        if not (received_crc == self.crc) :
+            print("Error in vel before hand...")
+            self.cleanup()
+            return []
+
+        # now read the instruction in buff
+        self.buff += self.port.read(16)
+
+        # received buff
+        print("In read encoder vel, received buff")
+        print(repr("%s" %self.buff))
+
+        # calculate local checksum
+        self.calculate_checksum()
+
+        print("In read encoder vel, own checksum ")
+        print(repr("%s" %self.crc))
+
+        # calculate local checksum with hole instruction
+        received_crc = self.read_checksum()
+
+        print("In read encoder vel, received crc")
+        print(repr("%s" %received_crc))
+
+
+        if (received_crc == self.crc):
+            return list(struct.unpack('ffff', self.buff[3:]))
+
+        else:
+            self.cleanup()
+            return []
+
+    def read_pid_fails(self):
+        """This reads the serial comm amount of fails for each encoder """
+
+        # flush clean the port
+        #self.port.flush()
+
+        # write v code with end and checksum
+        self.buff = "t".encode('utf-8')
+        self.buff += struct.pack('B', 10)
+        self.buff += struct.pack('B', 0)
+
+        # write instruction
+        self.write_wtimeout(self.buff)
+
+        # print buff
+        print("In read pid fails, own buffer")
+        print(repr("%s" %self.buff))
+
+        # calculate checksum of sent
+        self.calculate_checksum()
+        self.write_checksum()
+
+        print("In read pid fails, own checksum")
+        print(repr("%s" %self.crc))
+
+        # listen to the checksum that comes back
+        received_crc = self.read_checksum()
+
+        print("In read pid fails, received crc")
+        print(repr("%s" %received_crc))
+
+        # check it was sent ok, if not break here
+        if not (received_crc == self.crc) :
+            print("Error in vel before hand...")
+            self.cleanup()
+            return []
+
+        # now read the instruction in buff
+        self.buff += self.port.read(16)
+
+        # received buff
+        print("In read pid fails, received buff")
+        print(repr("%s" %self.buff))
+
+        # calculate local checksum
+        self.calculate_checksum()
+
+        print("In read pid fails, own checksum ")
+        print(repr("%s" %self.crc))
+
+        # calculate local checksum with hole instruction
+        received_crc = self.read_checksum()
+
+        print("In read pid fails, received crc")
+        print(repr("%s" %received_crc))
+
+
+        if (received_crc == self.crc):
+            return list(struct.unpack('ffff', self.buff[3:]))
+
+        else:
+            self.cleanup()
+            return []
+
+    def read_encoder_ticks(self):
+        """This reads the serial comm amount of fails for each encoder """
+
+        # flush clean the port
+        #self.port.flush()
+
+        # write v code with end and checksum
+        self.buff = "h".encode('utf-8')
+        self.buff += struct.pack('B', 10)
+        self.buff += struct.pack('B', 0)
+
+        # write instruction
+        self.write_wtimeout(self.buff)
+
+        # print buff
+        print("In read encoder ticks, own buffer")
+        print(repr("%s" %self.buff))
+
+        # calculate checksum of sent
+        self.calculate_checksum()
+        self.write_checksum()
+
+        print("In read encoder ticks, own checksum")
+        print(repr("%s" %self.crc))
+
+        # listen to the checksum that comes back
+        received_crc = self.read_checksum()
+
+        print("In read encoder ticks, received crc")
+        print(repr("%s" %received_crc))
+
+        # check it was sent ok, if not break here
+        if not (received_crc == self.crc) :
+            print("Error in vel before hand...")
+            self.cleanup()
+            return []
+
+        # now read the instruction in buff
+        self.buff += self.port.read(32)
+
+        # received buff
+        print("In read encoder ticks, received buff")
+        print(repr("%s" %self.buff))
+
+        # calculate local checksum
+        self.calculate_checksum()
+
+        print("In read encoder ticks, own checksum ")
+        print(repr("%s" %self.crc))
+
+        # calculate local checksum with hole instruction
+        received_crc = self.read_checksum()
+
+        print("In read encoder ticks, received crc")
+        print(repr("%s" %received_crc))
+
+
+        if (received_crc == self.crc):
+            return list(struct.unpack('qqqq', self.buff[3:]))
 
         else:
             self.cleanup()
